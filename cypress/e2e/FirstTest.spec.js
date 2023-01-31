@@ -167,7 +167,7 @@ describe("Our first suite", () => {
     cy.get('[type="checkbox"]').eq(1).check({ force: true });
   });
 
-  it.only("lists and dropdowns", () => {
+  it("lists and dropdowns", () => {
     cy.visit("/");
     //1
     cy.get("nav nb-select").click();
@@ -206,7 +206,7 @@ describe("Our first suite", () => {
     });
   });
 
-  it.only("Web tables", () => {
+  it.only("Web tables", () => { 
     cy.visit("/");
     cy.contains("Tables & Data").click();
     cy.contains("Smart Table").click();
@@ -251,13 +251,18 @@ describe("Our first suite", () => {
 
         // search
 
-        const age = [20, 30, 40];
+        const age = [20, 30, 40, 200];
 
         cy.wrap(age).each((age) => {
           cy.get('thead [placeholder="Age"]').clear().type(age);
           cy.wait(500);
           cy.get("tbody tr").each((tableRow) => {
-            cy.wrap(tableRow).find("td").eq(6).should("contain", age);
+            if(age == 200){
+                cy.wrap(tableRow).should('contain', 'No data found') 
+            }else{
+                cy.wrap(tableRow).find("td").eq(6).should("contain", age); 
+            }
+            
           });
         });
       });
