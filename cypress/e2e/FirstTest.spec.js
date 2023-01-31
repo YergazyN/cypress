@@ -1,206 +1,265 @@
 /// <reference types="cypress" />
 
-describe('Our first suite', () => {
+describe("Our first suite", () => {
+  it("first test", () => {
+    cy.visit("/");
+    cy.contains("Forms").click();
+    cy.contains("Form Layouts").click();
 
-    it('first test', () => {
+    //by Tag Name
+    cy.get("input");
 
-        cy.visit('/')
-        cy.contains('Forms').click()
-        cy.contains('Form Layouts').click()
+    //by ID
+    cy.get("#inputEmail1");
 
-        //by Tag Name
-        cy.get('input')
+    //by Class name
+    cy.get(".input-full-width");
 
-        //by ID
-        cy.get('#inputEmail1')
+    //by Attribute name
+    cy.get("[placeholder]");
 
-        //by Class name
-        cy.get('.input-full-width')
+    //by Attribute name and value
+    cy.get('[placeholder="Email"]');
 
-        //by Attribute name
-        cy.get('[placeholder]')
+    //by Class value
+    cy.get('[class="input-full-width size-medium shape-rectangle"]');
 
-        //by Attribute name and value
-        cy.get('[placeholder="Email"]')
+    //by Tag name and Attribute with value
+    cy.get('input[placeholder="Email"]');
 
-        //by Class value
-        cy.get('[class="input-full-width size-medium shape-rectangle"]')
+    //by two different attributes
+    cy.get('[placeholder="Email"][type="email"]');
 
-        //by Tag name and Attribute with value
-        cy.get('input[placeholder="Email"]')
+    //by tag name, Attribute with value, ID and Class name
+    cy.get('input[placeholder="Email"]#inputEmail1.input-full-width');
 
-        //by two different attributes
-        cy.get('[placeholder="Email"][type="email"]')
+    //The most recommended way by Cypress
+    cy.get('[data-cy="imputEmail1"]');
+  });
 
-        //by tag name, Attribute with value, ID and Class name
-        cy.get('input[placeholder="Email"]#inputEmail1.input-full-width')
+  it("second test", () => {
+    cy.visit("/");
+    cy.contains("Forms").click();
+    cy.contains("Form Layouts").click();
 
-        //The most recommended way by Cypress
-        cy.get('[data-cy="imputEmail1"]')
-    })
+    cy.get('[data-cy="signInButton"]');
 
-    it('second test', () => {
+    cy.contains("Sign in");
 
-        cy.visit('/')
-        cy.contains('Forms').click()
-        cy.contains('Form Layouts').click()
+    cy.contains('[status="warning"]', "Sign in");
 
-        cy.get('[data-cy="signInButton"]')
+    cy.get("#inputEmail3")
+      .parents("form")
+      .find("button")
+      .should("contain", "Sign in")
+      .parents("form")
+      .find("nb-checkbox")
+      .click();
 
-        cy.contains('Sign in')
+    cy.contains("nb-card", "Horizontal form").find('[type="email"]');
+  });
 
-        cy.contains('[status="warning"]','Sign in')
+  it("then and wrap methods", () => {
+    cy.visit("/");
+    cy.contains("Forms").click();
+    cy.contains("Form Layouts").click();
 
-        cy.get('#inputEmail3')
-            .parents('form')
-            .find('button')
-            .should('contain', 'Sign in')
-            .parents('form')
-            .find('nb-checkbox')
-            .click()
+    // cy.contains('nb-card', 'Using the Grid').find('[for="inputEmail1"]').should('contain', 'Email')
+    // cy.contains('nb-card', 'Using the Grid').find('[for="inputPassword2"]').should('contain', 'Password')
+    // cy.contains('nb-card', 'Basic form').find('[for="exampleInputEmail1"]').should('contain', 'Email address')
+    // cy.contains('nb-card', 'Basic form').find('[for="exampleInputPassword1"]').should('contain', 'Password')
 
-        cy.contains('nb-card', 'Horizontal form').find('[type="email"]')
+    //selenium
+    // const fistForm = cy.contains('nb-card', 'Using the Grid')
+    // const secondForm = cy.contains('nb-card', 'Basic form')
 
-    })
+    // fistForm.find('[for="inputEmail1"]').should('contain', 'Email')
+    // fistForm.find('[for="inputPassword2"]').should('contain', 'Password')
+    // secondForm.find('[for="exampleInputEmail1"]').should('contain', 'Email address')
 
-    it('then and wrap methods', () => {
+    //cypress style
 
-        cy.visit('/')
-        cy.contains('Forms').click()
-        cy.contains('Form Layouts').click()
+    cy.contains("nb-card", "Using the Grid").then((firstForm) => {
+      const emailLabelFirst = firstForm.find('[for="inputEmail1"]').text();
+      const passwordLabelFirst = firstForm
+        .find('[for="inputPassword2"]')
+        .text();
+      expect(emailLabelFirst).to.equal("Email");
+      expect(passwordLabelFirst).to.equal("Password");
 
-        // cy.contains('nb-card', 'Using the Grid').find('[for="inputEmail1"]').should('contain', 'Email')
-        // cy.contains('nb-card', 'Using the Grid').find('[for="inputPassword2"]').should('contain', 'Password')
-        // cy.contains('nb-card', 'Basic form').find('[for="exampleInputEmail1"]').should('contain', 'Email address')
-        // cy.contains('nb-card', 'Basic form').find('[for="exampleInputPassword1"]').should('contain', 'Password')
+      cy.contains("nb-card", "Basic form").then((secondForm) => {
+        const passwordSecondText = secondForm
+          .find('[for="exampleInputPassword1"]')
+          .text();
+        expect(passwordLabelFirst).to.equal(passwordSecondText);
 
-        //selenium
-        // const fistForm = cy.contains('nb-card', 'Using the Grid')
-        // const secondForm = cy.contains('nb-card', 'Basic form')
+        cy.wrap(secondForm)
+          .find('[for="exampleInputPassword1"]')
+          .should("contain", "Password");
+      });
+    });
+  });
 
-        // fistForm.find('[for="inputEmail1"]').should('contain', 'Email')
-        // fistForm.find('[for="inputPassword2"]').should('contain', 'Password')
-        // secondForm.find('[for="exampleInputEmail1"]').should('contain', 'Email address')
+  it("invoke command", () => {
+    cy.visit("/");
+    cy.contains("Forms").click();
+    cy.contains("Form Layouts").click();
 
-        //cypress style
+    //1
+    cy.get('[for="exampleInputEmail1"]')
+      .should("contain", "Email address")
+      .should("have.class", "label")
+      .and("have.text", "Email address");
 
-        cy.contains('nb-card', 'Using the Grid').then( firstForm => {
-            const emailLabelFirst = firstForm.find('[for="inputEmail1"]').text()
-            const passwordLabelFirst = firstForm.find('[for="inputPassword2"]').text()
-            expect(emailLabelFirst).to.equal('Email')
-            expect(passwordLabelFirst).to.equal('Password')
+    //2
+    cy.get('[for="exampleInputEmail1"]').then((label) => {
+      expect(label.text()).to.equal("Email address");
+      expect(label).to.have.class("label");
+      expect(label).to.have.text("Email address");
+    });
 
-            cy.contains('nb-card', 'Basic form').then( secondForm => {
-                const passwordSecondText = secondForm.find('[for="exampleInputPassword1"]').text()
-                expect(passwordLabelFirst).to.equal(passwordSecondText)
+    //3
+    cy.get('[for="exampleInputEmail1"]')
+      .invoke("text")
+      .then((text) => {
+        expect(text).to.equal("Email address");
+      });
 
-                cy.wrap(secondForm).find('[for="exampleInputPassword1"]').should('contain', 'Password')
+    cy.contains("nb-card", "Basic form")
+      .find("nb-checkbox")
+      .click()
+      .find(".custom-checkbox")
+      .invoke("attr", "class")
+      //.should('contain', 'checked')
+      .then((classValue) => {
+        expect(classValue).to.contain("checked");
+      });
+  });
 
-            })
-        })
-    })
+  it("radio button", () => {
+    cy.visit("/");
+    cy.contains("Forms").click();
+    cy.contains("Form Layouts").click();
 
-    it('invoke command', () => {
-        cy.visit('/')
-        cy.contains('Forms').click()
-        cy.contains('Form Layouts').click()
+    cy.contains("nb-card", "Using the Grid")
+      .find('[type="radio"]')
+      .then((radioButtons) => {
+        cy.wrap(radioButtons)
+          .first()
+          .check({ force: true })
+          .should("be.checked");
 
-        //1
-        cy.get('[for="exampleInputEmail1"]')
-            .should('contain', 'Email address')
-            .should('have.class', 'label')
-            .and('have.text', 'Email address')
+        cy.wrap(radioButtons).eq(1).check({ force: true });
 
-        //2
-        cy.get('[for="exampleInputEmail1"]').then( label => {
-            expect(label.text()).to.equal('Email address')
-            expect(label).to.have.class('label')
-            expect(label).to.have.text('Email address')
-        })
+        cy.wrap(radioButtons).eq(0).should("not.be.checked");
 
-        //3
-        cy.get('[for="exampleInputEmail1"]').invoke('text').then( text => {
-            expect(text).to.equal('Email address')
-        })
+        cy.wrap(radioButtons).eq(2).should("be.disabled");
+      });
+  });
 
-        cy.contains('nb-card', 'Basic form')
-            .find('nb-checkbox')
-            .click()
-            .find('.custom-checkbox')
-            .invoke('attr', 'class')
-            //.should('contain', 'checked')
-            .then(classValue => {
-                expect(classValue).to.contain('checked')
-            })
+  it("check boxes", () => {
+    cy.visit("/");
+    cy.contains("Modal & Overlays").click();
+    cy.contains("Toastr").click();
 
-    })   
+    //cy.get('[type="checkbox"]').check({force:true})
+    cy.get('[type="checkbox"]').eq(0).click({ force: true });
+    cy.get('[type="checkbox"]').eq(1).check({ force: true });
+  });
 
-    it('radio button', () => {
-        cy.visit('/')
-        cy.contains('Forms').click()
-        cy.contains('Form Layouts').click()
+  it.only("lists and dropdowns", () => {
+    cy.visit("/");
+    //1
+    cy.get("nav nb-select").click();
+    cy.get(".options-list").contains("Dark").click();
+    cy.get("nav nb-select").should("contain", "Dark");
+    cy.get("nb-layout-header nav").should(
+      "have.css",
+      "background-color",
+      "rgb(34, 43, 69)"
+    );
 
-        cy.contains('nb-card', 'Using the Grid').find('[type="radio"]').then( radioButtons => {
-            cy.wrap(radioButtons)
-                .first()
-                .check({force: true})
-                .should('be.checked')
+    //2
+    cy.get("nav nb-select").then((dropdown) => {
+      cy.wrap(dropdown).click();
+      cy.get(".options-list nb-option").each((listItem, index) => {
+        const itemText = listItem.text().trim();
 
-            cy.wrap(radioButtons)
-                .eq(1)
-                .check({force: true})
-                
-            cy.wrap(radioButtons)
-                .eq(0)
-                .should('not.be.checked')
-                
-            cy.wrap(radioButtons)
-                .eq(2)
-                .should('be.disabled')    
-        })
-    })
+        const colors = {
+          Light: "rgb(255, 255, 255)",
+          Dark: "rgb(34, 43, 69)",
+          Cosmic: "rgb(50, 50, 89)",
+          Corporate: "rgb(255, 255, 255)",
+        };
 
-    it('check boxes', () => {
-        cy.visit('/')
-        cy.contains('Modal & Overlays').click()
-        cy.contains('Toastr').click()
+        cy.wrap(listItem).click();
+        cy.wrap(dropdown).should("contain", itemText);
+        cy.get("nb-layout-header nav").should(
+          "have.css",
+          "background-color",
+          colors[itemText]
+        );
+        if (index < 3) {
+          cy.wrap(dropdown).click();
+        }
+      });
+    });
+  });
 
-        //cy.get('[type="checkbox"]').check({force:true})
-        cy.get('[type="checkbox"]').eq(0).click({force:true})
-        cy.get('[type="checkbox"]').eq(1).check({force:true})
+  it.only("Web tables", () => {
+    cy.visit("/");
+    cy.contains("Tables & Data").click();
+    cy.contains("Smart Table").click();
 
-    })
+    // edit row
+    cy.get("tbody")
+      .contains("tr", "Barbara")
+      .then((tableRow) => {
+        cy.wrap(tableRow).find(".nb-edit").click();
+        cy.wrap(tableRow).find('[placeholder="Age"]').clear().type("44");
+        cy.wrap(tableRow).find(".nb-checkmark").click();
+        cy.wrap(tableRow).find("td").eq(6).should("contain", "44");
+      });
 
-    it.only('lists and dropdowns', () => {
-        cy.visit('/')
-        //1
-        cy.get('nav nb-select').click()
-        cy.get('.options-list').contains('Dark').click()
-        cy.get('nav nb-select').should('contain', 'Dark')
-        cy.get('nb-layout-header nav').should('have.css', 'background-color', 'rgb(34, 43, 69)')
+    // add row
+    cy.get("thead").find(".nb-plus").click();
+    cy.get("thead")
+      .find("tr")
+      .eq(2)
+      .then((tableRow) => {
+        // fill inputs
+        cy.wrap(tableRow).find('[placeholder="ID"]').type("1709");
+        cy.wrap(tableRow).find('[placeholder="First Name"]').type("Yergazy");
+        cy.wrap(tableRow)
+          .find('[placeholder="Last Name"]')
+          .type("Nurmaganbetov");
+        cy.wrap(tableRow).find('[placeholder="Username"]').type("YergazyNur");
+        cy.wrap(tableRow)
+          .find('[placeholder="E-mail"]')
+          .type("nurmaganbetov0486@gmail.com");
+        cy.wrap(tableRow).find('[placeholder="Age"]').type("36");
+        cy.wrap(tableRow).find(".nb-checkmark").click();
 
-        //2
-        cy.get('nav nb-select').then( dropdown => {
-            cy.wrap(dropdown).click()
-            cy.get('.options-list nb-option').each( (listItem, index) => {
-                const itemText = listItem.text().trim()
+        // check input values
+        cy.get("tbody tr")
+          .first()
+          .find("td")
+          .then((tableColumn) => {
+            cy.wrap(tableColumn).eq(2).should("contain", "Yergazy");
+            cy.wrap(tableColumn).eq(3).should("contain", "Nurmaganbetov");
+          });
 
-                const colors = {
-                    "Light": "rgb(255, 255, 255)",
-                    "Dark": "rgb(34, 43, 69)",
-                    "Cosmic": "rgb(50, 50, 89)",
-                    "Corporate": "rgb(255, 255, 255)"
-                }
+        // search
 
-                cy.wrap(listItem).click()
-                cy.wrap(dropdown).should('contain', itemText)
-                cy.get('nb-layout-header nav').should('have.css', 'background-color', colors[itemText])
-                if( index < 3){
-                    cy.wrap(dropdown).click()
-                }
-            })
-        })
-    })
+        const age = [20, 30, 40];
 
-
-})
+        cy.wrap(age).each((age) => {
+          cy.get('thead [placeholder="Age"]').clear().type(age);
+          cy.wait(500);
+          cy.get("tbody tr").each((tableRow) => {
+            cy.wrap(tableRow).find("td").eq(6).should("contain", age);
+          });
+        });
+      });
+  });
+});
