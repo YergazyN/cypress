@@ -7,7 +7,7 @@ describe('Test with Page Objects', () => {
 
     // always open base url
     beforeEach('open application', () => {
-        cy.visit('/');
+        cy.openHomePage();
     });
 
     // it('verify navigations across the pages', () => {
@@ -15,10 +15,12 @@ describe('Test with Page Objects', () => {
     //     navigateTo.datepickerPage();
     //     navigateTo.toasterPage();
     //     navigateTo.smartTablePage();
-    //     navigateTo.tooltipPage();
+    //     navigateTo.tooltipPage(); 
     // });
 
-    it.only('Submit forms and choose next day in the datepicker', () => {
+    it.only('Submit forms and choose next day in the datepicker',
+        {browser: ['!firefox', '!edge']}, 
+        () => {
         navigateTo.formLayoutsPage();
         onFormLayoutsPage.submitInlineForm('Yergazy', 'yergazy0486@yahoo.com');
         onFormLayoutsPage.submitFormWithEmailAndPassword('yergazy0486@yahoo.com', '123456');
